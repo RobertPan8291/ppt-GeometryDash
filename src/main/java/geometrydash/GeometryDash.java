@@ -1,6 +1,6 @@
 package geometrydash;
 
-import java.util.Set;
+import java.util.*;
 
 public class GeometryDash {
     /**
@@ -10,8 +10,33 @@ public class GeometryDash {
      * @return true if the play completes the level and false otherwise
      */
     public static boolean isSuccessfulPlay(String level, String play) {
-        // TODO: Implement this method
-        return false;
+        int playerIndex = 0;
+        boolean state = true;
+
+        char[] arrlevel = level.toCharArray();
+        char[] charplay = play.toCharArray();
+        int[] arrplay = new int[play.length()];
+        List<Integer> dangerList = new ArrayList<>();
+
+        for(int i = 0; i< play.length(); i++){
+            arrplay[i] = Integer.parseInt(String.valueOf(charplay[i]));
+        }
+
+        for(int i = 0; i<arrlevel.length; i++){
+            if(arrlevel[i] == '^'){
+                dangerList.add(i);
+            }
+        }
+
+        for(int i = 0; i < arrplay.length; i++){
+            playerIndex += arrplay[i];
+
+            if(dangerList.contains(playerIndex)){
+                state = false;
+            }
+        }
+
+        return state;
     }
 
     /**
@@ -26,8 +51,69 @@ public class GeometryDash {
      */
     public static Set<String> successfulPlays(String level, Set<String> possiblePlays,
                                               int startingEnergy, int targetRestingEnergy) {
-        // TODO: Implement this method
-        return null;
+        Set<String> success = new HashSet<>();
+
+
+        char[] arrlevel = level.toCharArray();
+        List<Integer> dangerList = new ArrayList<>();
+        List<Integer> specialList = new ArrayList<>();
+
+        for(int i = 0; i<arrlevel.length; i++){
+            if(arrlevel[i] == '^'){
+                dangerList.add(i);
+            }
+
+            if(arrlevel[i] == '*'){
+                specialList.add(i);
+            }
+        }
+
+        for(String play: possiblePlays){
+            int playerIndex = 0;
+            boolean state = true;
+            int playerenergy = startingEnergy;
+            int[] arrplay = new int[play.length()];
+
+            char[] charplay = play.toCharArray();
+
+            for(int i = 0; i< play.length(); i++){
+                arrplay[i] = Integer.parseInt(String.valueOf(charplay[i]));
+            }
+
+            for(int i = 0; i < arrplay.length; i++){
+                playerIndex += arrplay[i];
+
+                if(arrplay[i] != 0){
+                    playerenergy -= arrplay[i];
+                }
+                else if(arrplay[i] == 0 && playerenergy < 3){
+                    playerenergy++;
+                }
+
+                if(specialList.contains(playerIndex)){
+                    playerIndex += 4;
+                }
+
+
+                if(dangerList.contains(playerIndex)){
+                    state = false;
+                }
+            }
+
+            if(playerenergy < targetRestingEnergy){
+                state = false;
+            }
+
+            if(playerIndex + 1 > arrlevel.length){
+                state = false;
+            }
+
+            if(state == true){
+                success.add(play);
+            }
+
+        }
+        return success;
     }
 
     /**
@@ -53,7 +139,22 @@ public class GeometryDash {
      * with target resting energy {@code targetRestingEnergy}
      */
     public static int numberOfPlays(String level, int startingEnergy, int targetRestingEnergy) {
-        // TODO: Implement this method
         return -1;
+    }
+
+    public static int recursivenum(int remain, int[]possibleplay,List curr, int start, List list){
+        if(remain == 0){
+
+        }
+
+        if(remain < 0){
+
+        }
+
+        for(int i = start; i < possibleplay.length; i++){
+            curr.add(possibleplay[i]);
+            recursivenum(remain - possibleplay[i],possibleplay,curr,start,list);
+            curr.remove(curr.size() - 1);
+        }
     }
 }
